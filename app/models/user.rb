@@ -10,7 +10,7 @@
 #
 
 class User < ActiveRecord::Base
-  attr_accessible :name, :email, :password, :password_confirmation
+  attr_accessible :name, :email, :password, :password_confirmation, :picture
   has_secure_password
 
   before_save { |user| user.email = email.downcase }
@@ -21,6 +21,16 @@ class User < ActiveRecord::Base
   validates :email, presence: true, format: { with: VALID_EMAIL_REGEX } , uniqueness: { case_sensitive: false }
   validates :password, presence: true, length: { minimum: 6 }
   validates :password_confirmation, presence: true
+  validates :picture, presence: true
+
+  # Paperclip
+  has_attached_file :picture,
+    :styles => {
+      :thumb=> "100x100#",
+      :small  => "150x150>" }
+  # Validaciones de Paperclip
+  validates_attachment_size :picture, :less_than => 2.megabytes
+  validates_attachment_content_type :picture, :content_type => ['image/jpeg', 'image/png']
 
   private
 
